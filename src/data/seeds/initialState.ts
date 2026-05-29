@@ -165,9 +165,45 @@ export const SEED_METRICS: DashboardMetrics = {
     icon: "BarChart2",
     sparklineData: [5, 7, 8, 9, 10, 11, 12],
   },
+  totalUsers: {
+    id: "total_users",
+    label: "Total Users",
+    value: 231,
+    displayValue: "231",
+    delta: 8,
+    deltaDirection: "up",
+    description: "All registered users",
+    color: "blue",
+    icon: "Users2",
+    sparklineData: [200, 208, 214, 219, 224, 228, 231],
+  },
+  dailyActiveUsers: {
+    id: "daily_active_users",
+    label: "Daily Active Users",
+    value: 18,
+    displayValue: "18",
+    delta: 12.5,
+    deltaDirection: "up",
+    description: "vs yesterday (16)",
+    color: "green",
+    icon: "Activity",
+    sparklineData: [14, 15, 16, 13, 17, 16, 18],
+  },
+  dailyCancellations: {
+    id: "daily_cancellations",
+    label: "Daily Cancellations",
+    value: 4,
+    displayValue: "4",
+    delta: -20,
+    deltaDirection: "up",
+    description: "vs yesterday (5)",
+    color: "red",
+    icon: "UserX",
+    sparklineData: [6, 5, 4, 5, 3, 5, 4],
+  },
 };
 
-export function generateDailyData(days: number = 90) {
+export function generateDailyData(days: number = 365) {
   return Array.from({ length: days }, (_, i) => {
     const date = subDays(new Date(), days - 1 - i);
     const baseSubscriptions = 18 + Math.floor((i / days) * 5);

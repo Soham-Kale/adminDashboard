@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import {
   UserPlus, Clock, UserMinus, UserCheck, CreditCard, Users, XCircle,
   UserCog, DollarSign, TrendingUp, TrendingDown, Shield, BarChart2,
+  Activity, Users2, UserX, Maximize2,
 } from "lucide-react";
 import { AnimatedNumber } from "@/components/shared/AnimatedNumber";
 import { TrendIndicator } from "@/components/shared/TrendIndicator";
@@ -15,14 +16,16 @@ import { LineChart, Line, ResponsiveContainer } from "recharts";
 const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   UserPlus, Clock, UserMinus, UserCheck, CreditCard, Users, XCircle,
   UserCog, DollarSign, TrendingUp, TrendingDown, Shield, BarChart2,
+  Activity, Users2, UserX,
 };
 
 interface KpiCardProps {
   metric: KpiMetric;
   index?: number;
+  onClick?: () => void;
 }
 
-export function KpiCard({ metric, index = 0 }: KpiCardProps) {
+export function KpiCard({ metric, index = 0, onClick }: KpiCardProps) {
   const Icon = ICON_MAP[metric.icon] ?? BarChart2;
   const colors = KPI_COLORS[metric.color];
   const numericValue = typeof metric.value === "number" ? metric.value : parseFloat(String(metric.value));
@@ -34,9 +37,19 @@ export function KpiCard({ metric, index = 0 }: KpiCardProps) {
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: index * 0.04 }}
-      className="bg-card border border-border rounded-xl p-4 hover:border-primary/30 transition-colors group relative overflow-hidden"
+      onClick={onClick}
+      className={cn(
+        "bg-card border border-border rounded-xl p-4 hover:border-primary/30 transition-colors group relative overflow-hidden",
+        onClick && "cursor-pointer hover:ring-1 hover:ring-primary/20"
+      )}
     >
       <div className="absolute inset-0 bg-gradient-to-br from-primary/3 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+
+      {onClick && (
+        <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+          <Maximize2 className="h-3 w-3 text-muted-foreground" />
+        </div>
+      )}
 
       <div className="flex items-start justify-between mb-3 relative">
         <div className={cn("p-2 rounded-lg", colors.bg)}>

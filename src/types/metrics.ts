@@ -25,6 +25,31 @@ export interface DashboardMetrics {
   churnRate: KpiMetric;
   retentionRate: KpiMetric;
   monthlyGrowth: KpiMetric;
+  totalUsers: KpiMetric;
+  dailyActiveUsers: KpiMetric;
+  dailyCancellations: KpiMetric;
+}
+
+export type TimeRange = "1w" | "1m" | "6m" | "1y";
+
+export interface OverlapSeries {
+  name: string;
+  color: string;
+  data: Array<{ date: string; value: number }>;
+}
+
+export interface MetricStats {
+  high: number;
+  low: number;
+  avg: number;
+  total: number;
+}
+
+export interface MetricTableRow {
+  date: string;
+  value: number;
+  delta: number;
+  deltaDirection: "up" | "down" | "neutral";
 }
 
 export interface ChartDataPoint {

@@ -9,10 +9,22 @@ import {
   generateHeatmapData,
 } from "@/data/seeds/initialState";
 
-export async function GET() {
-  const daily = generateDailyData(90);
-  const weekly = generateWeeklyData(12);
-  const monthly = generateMonthlyRevenue(12);
+const RANGE_DAYS: Record<string, number> = {
+  "1w": 7,
+  "1m": 30,
+  "6m": 180,
+  "1y": 365,
+};
+
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const range = searchParams.get("range") ?? "all";
+  const days = RANGE_DAYS[range] ?? 365;
+
+  const allDaily = generateDailyData(365);
+  const daily = range === "all" ? allDaily : allDaily.slice(-days);
+  const weekly = generateWeeklyData(range === "1w" ? 1 : range === "1m" ? 4 : range === "6m" ? 26 : 52);
+  const monthly = generateMonthlyRevenue(range === "1w" || range === "1m" ? 3 : range === "6m" ? 6 : 12);
   const heatmap = generateHeatmapData();
 
   const comparative = {
@@ -43,6 +55,6 @@ export async function GET() {
       heatmap,
       comparative,
     },
-    meta: { source: "mock" },
+    meta: { source: "mock", range, days },
   });
 }

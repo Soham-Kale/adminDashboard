@@ -11,7 +11,7 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/subscriptions", label: "Subscriptions", icon: "CreditCard" },
   { href: "/analytics", label: "Analytics", icon: "BarChart2" },
   { href: "/revenue", label: "Revenue", icon: "DollarSign" },
-  { href: "/integrations", label: "Integrations", icon: "Plug" },
+  // { href: "/integrations", label: "Integrations", icon: "Plug" },
   { href: "/admin-logs", label: "Admin Logs", icon: "FileText" },
   { href: "/settings", label: "Settings", icon: "Settings" },
 ];
