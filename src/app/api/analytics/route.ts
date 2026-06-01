@@ -6,6 +6,9 @@ import {
   COUNTRY_DATA,
   DEVICE_DATA,
   FUNNEL_DATA,
+  SPORT_DATA,
+  SPORT_STATUS_DATA,
+  REGION_DATA,
   generateHeatmapData,
 } from "@/data/seeds/initialState";
 
@@ -54,6 +57,9 @@ export async function GET(req: Request) {
       funnel: FUNNEL_DATA,
       heatmap,
       comparative,
+      sports: SPORT_DATA,
+      sportStatus: SPORT_STATUS_DATA,
+      regions: REGION_DATA,
     },
     meta: { source: "mock", range, days },
   });

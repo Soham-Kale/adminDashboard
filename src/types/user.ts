@@ -13,6 +13,7 @@ export interface AppUser {
   userName: string;
   email: string;
   country: string;
+  sport: string;
   deviceType: string;
   referralSource: string;
   onboardedAt: string;

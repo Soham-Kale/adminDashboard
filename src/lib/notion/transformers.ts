@@ -40,6 +40,7 @@ export function transformNotionPageToSubscriber(page: PageObjectResponse): Subsc
     accessEndDate: getDate(props["Access End Date"]),
     revenue: getNumber(props["Revenue"]),
     country: getText(props["Country"]),
+    sport: getText(props["Sport"]) || "Football",
     deviceType: (getSelect(props["Device Type"]) || "mobile") as Subscriber["deviceType"],
     referralSource: getText(props["Referral Source"]),
     paymentStatus: (getSelect(props["Payment Status"]) || "paid") as Subscriber["paymentStatus"],

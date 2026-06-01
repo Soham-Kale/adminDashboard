@@ -1,7 +1,6 @@
 "use client";
 
-import { signOut, useSession } from "next-auth/react";
-import { Bell, Sun, Moon, LogOut, User, RefreshCw } from "lucide-react";
+import { Bell, Sun, Moon, User, RefreshCw } from "lucide-react";
 import { useUiStore } from "@/store/uiStore";
 import { usePathname } from "next/navigation";
 import { NAV_ITEMS } from "@/lib/constants/navigation";
@@ -9,7 +8,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
 export function TopBar() {
-  const { data: session } = useSession();
   const { theme, setTheme } = useUiStore();
   const pathname = usePathname();
   const queryClient = useQueryClient();
@@ -63,20 +61,9 @@ export function TopBar() {
             <User className="h-4 w-4 text-primary" />
           </div>
           <div className="hidden sm:block">
-            <p className="text-sm font-medium text-foreground leading-none">
-              {session?.user?.name ?? "Admin"}
-            </p>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              {session?.user?.email ?? "admin@youinsports.ai"}
-            </p>
+            <p className="text-sm font-medium text-foreground leading-none">Admin</p>
+            <p className="text-xs text-muted-foreground mt-0.5">admin@youinsports.ai</p>
           </div>
-          <button
-            onClick={() => signOut({ callbackUrl: "/login" })}
-            className="p-2 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-            title="Sign out"
-          >
-            <LogOut className="h-4 w-4" />
-          </button>
         </div>
       </div>
     </header>

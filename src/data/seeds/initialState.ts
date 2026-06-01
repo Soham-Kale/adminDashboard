@@ -275,6 +275,39 @@ export const FUNNEL_DATA = [
   { stage: "Converted to Paid", value: 23, percentage: 2 },
 ];
 
+export const SPORT_DATA = [
+  { sport: "Football",   users: 52, percentage: 22 },
+  { sport: "Cricket",    users: 38, percentage: 16 },
+  { sport: "Basketball", users: 34, percentage: 15 },
+  { sport: "Tennis",     users: 27, percentage: 12 },
+  { sport: "Baseball",   users: 22, percentage: 10 },
+  { sport: "Golf",       users: 18, percentage:  8 },
+  { sport: "Rugby",      users: 15, percentage:  6 },
+  { sport: "Hockey",     users: 12, percentage:  5 },
+  { sport: "Swimming",   users:  8, percentage:  4 },
+  { sport: "Athletics",  users:  5, percentage:  2 },
+];
+
+export const SPORT_STATUS_DATA = [
+  { sport: "Football",   active: 28, trial: 12, cancelled: 12 },
+  { sport: "Cricket",    active: 18, trial:  8, cancelled: 12 },
+  { sport: "Basketball", active: 16, trial:  7, cancelled: 11 },
+  { sport: "Tennis",     active: 13, trial:  5, cancelled:  9 },
+  { sport: "Baseball",   active: 10, trial:  5, cancelled:  7 },
+  { sport: "Golf",       active:  8, trial:  4, cancelled:  6 },
+  { sport: "Rugby",      active:  7, trial:  3, cancelled:  5 },
+  { sport: "Hockey",     active:  6, trial:  2, cancelled:  4 },
+  { sport: "Swimming",   active:  4, trial:  2, cancelled:  2 },
+  { sport: "Athletics",  active:  2, trial:  1, cancelled:  2 },
+];
+
+export const REGION_DATA = [
+  { region: "Americas",     users: 115, percentage: 50 },
+  { region: "Europe",       users:  57, percentage: 25 },
+  { region: "Asia-Pacific", users:  46, percentage: 20 },
+  { region: "Other",        users:  13, percentage:  5 },
+];
+
 export function generateHeatmapData() {
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   const data: Array<{ day: string; hour: number; value: number }> = [];

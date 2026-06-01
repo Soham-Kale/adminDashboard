@@ -7,6 +7,7 @@ export async function GET() {
     userName: s.userName,
     email: s.email,
     country: s.country,
+    sport: s.sport,
     deviceType: s.deviceType,
     referralSource: s.referralSource,
     onboardedAt: s.createdAt,

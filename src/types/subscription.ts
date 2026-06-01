@@ -23,6 +23,7 @@ export interface Subscriber {
   accessEndDate: string | null;
   revenue: number;
   country: string;
+  sport: string;
   deviceType: DeviceType;
   referralSource: string;
   paymentStatus: PaymentStatus;

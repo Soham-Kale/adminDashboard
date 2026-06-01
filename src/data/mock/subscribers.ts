@@ -13,6 +13,10 @@ const NAMES = [
 const COUNTRIES = ["United States", "India", "United Kingdom", "Canada", "Australia", "Germany", "France", "Brazil"];
 const SOURCES = ["organic", "google_ads", "social_media", "referral", "email", "direct"];
 const DEVICES: Array<"mobile" | "desktop" | "tablet"> = ["mobile", "mobile", "mobile", "desktop", "desktop", "tablet"];
+const SPORTS = [
+  "Football", "Cricket", "Basketball", "Tennis", "Baseball",
+  "Golf", "Rugby", "Hockey", "Swimming", "Athletics",
+];
 
 function randomFrom<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
@@ -34,6 +38,7 @@ export const MOCK_SUBSCRIBERS: Subscriber[] = Array.from({ length: 23 }, (_, i) 
     accessEndDate: null,
     revenue: i % 3 === 0 ? 999 : 99,
     country: randomFrom(COUNTRIES),
+    sport: randomFrom(SPORTS),
     deviceType: randomFrom(DEVICES),
     referralSource: randomFrom(SOURCES),
     paymentStatus: "paid",
@@ -57,6 +62,7 @@ export const MOCK_PENDING: Subscriber[] = Array.from({ length: 3 }, (_, i) => {
     accessEndDate: null,
     revenue: 0,
     country: randomFrom(COUNTRIES),
+    sport: randomFrom(SPORTS),
     deviceType: randomFrom(DEVICES),
     referralSource: randomFrom(SOURCES),
     paymentStatus: "pending",
@@ -82,6 +88,7 @@ export const MOCK_CANCELLED: Subscriber[] = Array.from({ length: 60 }, (_, i) =>
     accessEndDate: isAccessEnded ? format(cancelDate, "yyyy-MM-dd") : format(addDays(startDate, 30), "yyyy-MM-dd"),
     revenue: i % 4 === 0 ? 999 : 99,
     country: randomFrom(COUNTRIES),
+    sport: randomFrom(SPORTS),
     deviceType: randomFrom(DEVICES),
     referralSource: randomFrom(SOURCES),
     paymentStatus: "paid",
@@ -105,6 +112,7 @@ export const MOCK_TRIALS: Subscriber[] = Array.from({ length: 8 }, (_, i) => {
     accessEndDate: format(addDays(startDate, 14), "yyyy-MM-dd"),
     revenue: 0,
     country: randomFrom(COUNTRIES),
+    sport: randomFrom(SPORTS),
     deviceType: randomFrom(DEVICES),
     referralSource: randomFrom(SOURCES),
     paymentStatus: "pending",
