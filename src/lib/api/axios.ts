@@ -14,7 +14,15 @@ const apiClient = axios.create({
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.error("API Error:", error.response?.data ?? error.message);
+    const status  = error.response?.status;
+    const code    = error.response?.data?.code;
+    const message = error.response?.data?.error ?? error.response?.data?.message ?? error.message;
+
+    if (status === 503 && code === "BACKEND_UNAVAILABLE") {
+      console.warn(`[Dashboard] Backend unavailable: ${message}`);
+    } else {
+      console.error(`[Dashboard] API ${status ?? "Network"} error:`, message);
+    }
     return Promise.reject(error);
   }
 );

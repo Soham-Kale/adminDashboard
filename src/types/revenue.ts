@@ -1,27 +1,29 @@
+// Fields returned by real backend at /admin/revenue?type=history
 export interface RevenueRecord {
   id: string;
-  userId: string;
+  userSubscriptionId: string;
   userName: string;
   email: string;
   amount: number;
   currency: string;
-  planType: string;
+  billingCycle: string;       // 'monthly' | 'annual'
+  paymentStatus: "paid" | "failed";
   paymentDate: string;
-  paymentStatus: "paid" | "failed" | "pending" | "refunded";
-  invoiceId: string;
-  country: string;
+  provider: string;           // 'stripe' | 'apple' | 'google' | etc.
+  createdAt: string;
 }
 
+// Fields returned by real backend at /admin/revenue?type=failed
 export interface FailedPayment {
   id: string;
-  userId: string;
+  userSubscriptionId: string;
   userName: string;
   email: string;
   amount: number;
+  currency: string;
   attemptedAt: string;
-  failureReason: string;
   retryCount: number;
-  planType: string;
+  provider: string;
 }
 
 export interface RevenueStats {

@@ -14,8 +14,9 @@ export interface KpiMetric {
 export interface DashboardMetrics {
   newSubscriptionsToday: KpiMetric;
   triedSubscribingToday: KpiMetric;
-  cancelledAccessEnded: KpiMetric;
-  cancelledAccessActive: KpiMetric;
+  // cancelledToday replaces the old cancelledAccessEnded + cancelledAccessActive
+  cancelledToday: KpiMetric;
+  pausedToday: KpiMetric;
   trialEndedChargedToday: KpiMetric;
   totalActiveSubscriptions: KpiMetric;
   totalCancellations: KpiMetric;

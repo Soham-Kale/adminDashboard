@@ -12,8 +12,8 @@ interface KpiGridProps {
 const METRIC_ORDER: Array<keyof DashboardMetrics> = [
   "newSubscriptionsToday",
   "triedSubscribingToday",
-  "cancelledAccessEnded",
-  "cancelledAccessActive",
+  "cancelledToday",
+  "pausedToday",
   "trialEndedChargedToday",
   "totalActiveSubscriptions",
   "totalCancellations",

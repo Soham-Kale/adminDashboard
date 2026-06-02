@@ -1,38 +1,28 @@
 import { NextResponse } from "next/server";
-import { isNotionConfigured } from "@/lib/notion/client";
-import { queryAllSubscribers } from "@/lib/notion/queries";
+import { backendGet, backendPost } from "@/lib/api/backendClient";
 
-export async function POST() {
-  if (!isNotionConfigured()) {
-    return NextResponse.json({
-      success: false,
-      message: "Notion is not configured. Add NOTION_API_KEY and NOTION_DATABASE_ID to .env.local",
-      source: "mock",
-    });
-  }
-
+export async function GET() {
   try {
-    const pages = await queryAllSubscribers();
-    return NextResponse.json({
-      success: true,
-      message: `Synced ${pages.length} records from Notion`,
-      count: pages.length,
-      lastSynced: new Date().toISOString(),
-      source: "notion",
-    });
-  } catch (error) {
+    const data = await backendGet("/admin/notion/sync");
+    return NextResponse.json(data);
+  } catch (err) {
+    console.error("Sync status error:", err);
     return NextResponse.json(
-      { success: false, message: "Sync failed. Check your Notion API key and database permissions." },
-      { status: 500 }
+      { error: "Failed to fetch sync status", code: "BACKEND_UNAVAILABLE" },
+      { status: 503 }
     );
   }
 }
 
-export async function GET() {
-  return NextResponse.json({
-    connected: isNotionConfigured(),
-    source: isNotionConfigured() ? "notion" : "mock",
-    databaseId: process.env.NOTION_DATABASE_ID ? `...${process.env.NOTION_DATABASE_ID.slice(-6)}` : null,
-    lastSynced: null,
-  });
+export async function POST() {
+  try {
+    const data = await backendPost("/admin/notion/sync");
+    return NextResponse.json(data);
+  } catch (err) {
+    console.error("Sync trigger error:", err);
+    return NextResponse.json(
+      { error: "Sync failed. Check backend connectivity.", code: "BACKEND_UNAVAILABLE" },
+      { status: 503 }
+    );
+  }
 }

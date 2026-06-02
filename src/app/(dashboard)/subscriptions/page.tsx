@@ -13,13 +13,13 @@ import { TrialToPaidFunnel } from "@/components/charts/TrialToPaidFunnel";
 import { SubscriptionStatusPie } from "@/components/charts/SubscriptionStatusPie";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
-import { FUNNEL_DATA } from "@/data/seeds/initialState";
 
 const TABS = [
-  { key: "active", label: "Active" },
-  { key: "pending", label: "Pending" },
-  { key: "cancelled_access_ended", label: "Cancelled" },
-  { key: "trial", label: "Trials" },
+  { key: "active",    label: "Active" },
+  { key: "trial",     label: "Trials" },
+  { key: "pending",   label: "Pending" },
+  { key: "paused",    label: "Paused" },
+  { key: "cancelled", label: "Cancelled" },
 ] as const;
 
 type TabKey = typeof TABS[number]["key"];
@@ -33,9 +33,9 @@ export default function SubscriptionsPage() {
   const analyticsData = analytics?.data;
 
   const columns =
-    activeTab === "active" ? activeSubscribersColumns
+    activeTab === "active"    ? activeSubscribersColumns
+    : activeTab === "trial"   ? trialUsersColumns
     : activeTab === "pending" ? pendingSubscriptionsColumns
-    : activeTab === "trial" ? trialUsersColumns
     : cancelledUsersColumns;
 
   return (
@@ -51,8 +51,8 @@ export default function SubscriptionsPage() {
       </div>
 
       <TrialToPaidFunnel
-        data={FUNNEL_DATA}
-        isLoading={false}
+        data={analyticsData?.funnel ?? []}
+        isLoading={analyticsLoading}
       />
 
       <div className="bg-card border border-border rounded-xl p-5">

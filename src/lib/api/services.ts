@@ -12,8 +12,6 @@ import apiClient from "./axios";
 import type { DashboardMetrics, TimeRange } from "@/types/metrics";
 import type { Subscriber } from "@/types/subscription";
 import type { RevenueRecord, FailedPayment, RevenueStats } from "@/types/revenue";
-import type { AdminLog } from "@/types/logs";
-import type { ApiResponse } from "@/types/api";
 
 // ─── Response Types ────────────────────────────────────────────────────────
 
@@ -89,6 +87,10 @@ export interface AnalyticsData {
   sports: Array<{ sport: string; users: number; percentage: number }>;
   sportStatus: Array<{ sport: string; active: number; trial: number; cancelled: number }>;
   regions: Array<{ region: string; users: number; percentage: number }>;
+  // From real backend — billing cycle, payment provider, plan distribution
+  billingBreakdown?: Array<{ cycle: string; value: number; percentage: number }>;
+  providers?: Array<{ provider: string; value: number; percentage: number }>;
+  plans?: Array<{ plan: string; value: number; percentage: number }>;
 }
 
 export interface AnalyticsResponse {

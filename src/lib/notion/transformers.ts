@@ -20,31 +20,23 @@ function getDate(prop: NotionPropertyValue): string | null {
   return null;
 }
 
-function getNumber(prop: NotionPropertyValue): number {
-  if (prop.type === "number") return prop.number ?? 0;
-  return 0;
-}
-
 export function transformNotionPageToSubscriber(page: PageObjectResponse): Subscriber {
   const props = page.properties;
   return {
-    id: page.id,
-    userName: getText(props["User Name"] ?? props["Name"]),
-    email: getText(props["Email"]),
-    planType: (getSelect(props["Plan Type"]) || "monthly") as Subscriber["planType"],
-    subscriptionStatus: (getSelect(props["Subscription Status"]) || "active") as Subscriber["subscriptionStatus"],
-    trialStatus: (getSelect(props["Trial Status"]) || "none") as Subscriber["trialStatus"],
+    userSubscriptionId:    page.id,
+    userName:              getText(props["User Name"] ?? props["Name"]),
+    email:                 getText(props["Email"]),
+    planName:              getText(props["Plan Name"]) || getSelect(props["Plan Type"]) || "Pro Monthly",
+    planCode:              getText(props["Plan Code"]) || "pro_m",
+    billingCycle:          (getSelect(props["Billing Cycle"]) || getSelect(props["Plan Type"]) || "monthly") as Subscriber["billingCycle"],
+    currency:              getText(props["Currency"]) || "USD",
+    subscriptionStatus:    (getSelect(props["Subscription Status"]) || "active") as Subscriber["subscriptionStatus"],
+    trialStatus:           (getSelect(props["Trial Status"]) || "none") as Subscriber["trialStatus"],
+    provider:              getText(props["Provider"]) || getSelect(props["Provider"]) || "stripe",
     subscriptionStartDate: getDate(props["Subscription Start Date"]) ?? page.created_time.split("T")[0],
-    renewalDate: getDate(props["Renewal Date"]),
-    cancellationDate: getDate(props["Cancellation Date"]),
-    accessEndDate: getDate(props["Access End Date"]),
-    revenue: getNumber(props["Revenue"]),
-    country: getText(props["Country"]),
-    sport: getText(props["Sport"]) || "Football",
-    deviceType: (getSelect(props["Device Type"]) || "mobile") as Subscriber["deviceType"],
-    referralSource: getText(props["Referral Source"]),
-    paymentStatus: (getSelect(props["Payment Status"]) || "paid") as Subscriber["paymentStatus"],
-    createdAt: page.created_time.split("T")[0],
+    renewalDate:           getDate(props["Renewal Date"]),
+    accessEndDate:         getDate(props["Access End Date"]),
+    createdAt:             page.created_time.split("T")[0],
   };
 }
 

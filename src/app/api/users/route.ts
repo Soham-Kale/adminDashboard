@@ -1,22 +1,15 @@
 import { NextResponse } from "next/server";
-import { ALL_SUBSCRIBERS } from "@/data/mock/subscribers";
+import { backendGet } from "@/lib/api/backendClient";
 
 export async function GET() {
-  const users = ALL_SUBSCRIBERS.map((s) => ({
-    id: s.id,
-    userName: s.userName,
-    email: s.email,
-    country: s.country,
-    sport: s.sport,
-    deviceType: s.deviceType,
-    referralSource: s.referralSource,
-    onboardedAt: s.createdAt,
-    subscriptionId: s.id,
-    isActive: s.subscriptionStatus === "active",
-  }));
-
-  return NextResponse.json({
-    data: users,
-    meta: { source: "mock", total: users.length },
-  });
+  try {
+    const data = await backendGet("/admin/users");
+    return NextResponse.json(data);
+  } catch (err) {
+    console.error("Users error:", err);
+    return NextResponse.json(
+      { error: "Failed to fetch users", code: "BACKEND_UNAVAILABLE" },
+      { status: 503 }
+    );
+  }
 }

@@ -1,38 +1,39 @@
+// Status values from real backend
 export type SubscriptionStatus =
   | "active"
-  | "cancelled_access_ended"
-  | "cancelled_access_active"
-  | "pending"
   | "trial"
-  | "trial_converted";
+  | "pending"
+  | "paused"
+  | "cancelled"
+  | "expired";
 
-export type PlanType = "monthly" | "annual" | "trial" | "free";
-export type PaymentStatus = "paid" | "failed" | "pending" | "refunded";
+export type BillingCycle = "monthly" | "annual" | "yearly";
+export type PaymentStatus = "paid" | "failed";
 export type DeviceType = "mobile" | "desktop" | "tablet";
 
 export interface Subscriber {
-  id: string;
+  userSubscriptionId: number | string;
   userName: string;
   email: string;
-  planType: PlanType;
+  planName: string;
+  planCode: string;
+  billingCycle: BillingCycle;
+  currency: string;
   subscriptionStatus: SubscriptionStatus;
   trialStatus: "active" | "ended" | "none";
+  provider: string;
   subscriptionStartDate: string;
   renewalDate: string | null;
-  cancellationDate: string | null;
   accessEndDate: string | null;
-  revenue: number;
-  country: string;
-  sport: string;
-  deviceType: DeviceType;
-  referralSource: string;
-  paymentStatus: PaymentStatus;
+  trialStartDate?: string | null;
+  trialEndDate?: string | null;
+  isComplimentary?: number | boolean;
   createdAt: string;
 }
 
 export interface SubscriberFilters {
   status?: SubscriptionStatus;
-  plan?: PlanType;
+  plan?: string;
   country?: string;
   dateFrom?: string;
   dateTo?: string;

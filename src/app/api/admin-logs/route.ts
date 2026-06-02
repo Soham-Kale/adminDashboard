@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
-import { MOCK_LOGS } from "@/data/mock/logs";
 
+// No backend endpoint exists for admin logs yet.
+// Returns an empty dataset so the Admin Logs page renders cleanly.
 export async function GET() {
   return NextResponse.json({
-    data: MOCK_LOGS,
-    meta: { source: "mock", total: MOCK_LOGS.length },
+    data: [],
+    meta: { source: "database", total: 0 },
   });
 }
