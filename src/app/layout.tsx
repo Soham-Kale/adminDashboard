@@ -4,6 +4,7 @@ import "./globals.css";
 import { QueryProvider } from "@/components/providers/QueryProvider";
 import { SessionProvider } from "@/components/providers/SessionProvider";
 import { ToastProvider } from "@/components/providers/ToastProvider";
+import { CurrencyInitializer } from "@/components/providers/CurrencyInitializer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,6 +26,7 @@ export default function RootLayout({
       <body className={`${inter.className} bg-background text-foreground antialiased`}>
         <SessionProvider>
           <QueryProvider>
+            <CurrencyInitializer />
             {children}
             <ToastProvider />
           </QueryProvider>

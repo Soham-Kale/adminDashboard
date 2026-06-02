@@ -159,10 +159,11 @@ export async function GET() {
       revenue: {
         id: "revenue", label: "Monthly Revenue",
         value: currentMonthRevenue,
-        displayValue: `$${currentMonthRevenue.toLocaleString()}`,
+        // No currency symbol — frontend applies the user's selected currency via useCurrency()
+        displayValue: currentMonthRevenue.toLocaleString(),
         delta: Math.abs(revGrowth), deltaDirection: revGrowth >= 0 ? "up" : "down",
         description: lastMonthRevenue > 0
-          ? `vs last month ($${lastMonthRevenue.toLocaleString()})` : "This month",
+          ? `vs last month ${lastMonthRevenue.toLocaleString()}` : "This month",
         color: "green", icon: "DollarSign", sparklineData: sparkRevenue,
       },
       conversionRate: {

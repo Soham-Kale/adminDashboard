@@ -10,8 +10,8 @@ import { MonthlyRevenueAnalytics } from "@/components/charts/MonthlyRevenueAnaly
 import { RevenueForecast } from "@/components/charts/RevenueForecast";
 import { RevenueGrowthBar } from "@/components/charts/RevenueGrowthBar";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
-import { formatCurrency } from "@/lib/utils/formatters";
 import { DollarSign, TrendingUp, CreditCard, AlertCircle } from "lucide-react";
+import { useCurrency } from "@/hooks/useCurrency";
 
 function StatCard({ label, value, icon: Icon, color }: { label: string; value: string; icon: React.ComponentType<{ className?: string }>; color: string }) {
   return (
@@ -31,6 +31,7 @@ export default function RevenuePage() {
   const { data: revenueData, isLoading } = useRevenueHistory();
   const { data: failedData, isLoading: failedLoading } = useFailedPayments();
   const { data: analytics, isLoading: analyticsLoading } = useAnalytics();
+  const { formatRevenue } = useCurrency();
 
   const stats = revenueData?.stats;
   const analyticsData = analytics?.data;
@@ -38,10 +39,10 @@ export default function RevenuePage() {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
-        <StatCard label="Monthly Revenue" value={stats ? formatCurrency(stats.mrr) : "$2,300"} icon={DollarSign} color="bg-green-500/10 text-green-400" />
-        <StatCard label="Annual Revenue" value={stats ? formatCurrency(stats.arr) : "$27,600"} icon={TrendingUp} color="bg-blue-500/10 text-blue-400" />
-        <StatCard label="Avg. Per User" value={stats ? formatCurrency(stats.averageRevenuePerUser) : "$100"} icon={CreditCard} color="bg-purple-500/10 text-purple-400" />
-        <StatCard label="Growth Rate" value={stats ? `${stats.revenueGrowth}%` : "12%"} icon={TrendingUp} color="bg-orange-500/10 text-orange-400" />
+        <StatCard label="Monthly Revenue"  value={stats ? formatRevenue(stats.mrr, "USD")                 : "—"} icon={DollarSign} color="bg-green-500/10 text-green-400" />
+        <StatCard label="Annual Revenue"   value={stats ? formatRevenue(stats.arr, "USD")                 : "—"} icon={TrendingUp}  color="bg-blue-500/10 text-blue-400" />
+        <StatCard label="Avg. Per User"    value={stats ? formatRevenue(stats.averageRevenuePerUser, "USD"): "—"} icon={CreditCard}  color="bg-purple-500/10 text-purple-400" />
+        <StatCard label="Growth Rate"      value={stats ? `${stats.revenueGrowth.toFixed(1)}%`           : "—"} icon={TrendingUp}  color="bg-orange-500/10 text-orange-400" />
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">

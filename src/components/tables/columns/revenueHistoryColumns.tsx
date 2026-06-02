@@ -1,14 +1,27 @@
+"use client";
+
 import type { ColumnDef } from "@tanstack/react-table";
 import type { RevenueRecord } from "@/types/revenue";
 import { StatusBadge } from "@/components/shared/StatusBadge";
-import { formatDate, formatCurrency } from "@/lib/utils/formatters";
+import { formatDate } from "@/lib/utils/formatters";
+import { useCurrency } from "@/hooks/useCurrency";
+
+// Cell component so the hook can be called inside a React component
+function AmountCell({ amount, currency }: { amount: number; currency: string }) {
+  const { formatRevenue } = useCurrency();
+  return (
+    <span className="text-green-400 font-semibold">
+      {formatRevenue(amount, currency)}
+    </span>
+  );
+}
 
 export const revenueHistoryColumns: ColumnDef<RevenueRecord, unknown>[] = [
   {
     accessorKey: "userSubscriptionId",
     header: "Subscription",
     cell: ({ getValue }) => (
-      <span className="font-mono text-xs text-muted-foreground">{getValue() as string}</span>
+      <span className="font-mono text-xs text-muted-foreground">{String(getValue())}</span>
     ),
   },
   {
@@ -29,14 +42,16 @@ export const revenueHistoryColumns: ColumnDef<RevenueRecord, unknown>[] = [
   {
     accessorKey: "amount",
     header: "Amount",
-    cell: ({ getValue }) => (
-      <span className="text-green-400 font-semibold">{formatCurrency(getValue() as number)}</span>
+    cell: ({ getValue, row }) => (
+      <AmountCell amount={getValue() as number} currency={row.original.currency} />
     ),
   },
   {
     accessorKey: "currency",
-    header: "Currency",
-    cell: ({ getValue }) => <span className="text-xs font-mono">{getValue() as string}</span>,
+    header: "Orig. Currency",
+    cell: ({ getValue }) => (
+      <span className="text-xs font-mono text-muted-foreground">{getValue() as string}</span>
+    ),
   },
   {
     accessorKey: "paymentStatus",

@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { NAV_ITEMS } from "@/lib/constants/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
+import { CurrencySelector } from "./CurrencySelector";
 
 export function TopBar() {
   const { theme, setTheme } = useUiStore();
@@ -41,6 +42,8 @@ export function TopBar() {
         >
           <RefreshCw className="h-4 w-4" />
         </button>
+
+        <CurrencySelector />
 
         <button
           onClick={handleThemeToggle}

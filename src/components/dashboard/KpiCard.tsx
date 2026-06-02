@@ -12,6 +12,7 @@ import { KPI_COLORS } from "@/lib/constants/chartColors";
 import { cn } from "@/lib/utils/cn";
 import type { KpiMetric } from "@/types/metrics";
 import { LineChart, Line, ResponsiveContainer } from "recharts";
+import { useCurrencyStore, CURRENCY_SYMBOLS } from "@/store/currencyStore";
 
 const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   UserPlus, Clock, UserMinus, UserCheck, CreditCard, Users, XCircle,
@@ -31,6 +32,14 @@ export function KpiCard({ metric, index = 0, onClick }: KpiCardProps) {
   const numericValue = typeof metric.value === "number" ? metric.value : parseFloat(String(metric.value));
   const hasDecimals = metric.displayValue.includes("%") || metric.displayValue.includes(".");
   const sparkData = metric.sparklineData?.map((v, i) => ({ i, v })) ?? [];
+
+  // Currency conversion for the revenue KPI
+  const { selectedCurrency, exchangeRates } = useCurrencyStore();
+  const isRevenue = metric.id === "revenue";
+  const currencySymbol = CURRENCY_SYMBOLS[selectedCurrency];
+  const convertedValue = isRevenue
+    ? Math.round((numericValue / (exchangeRates["USD"] ?? 1)) * (exchangeRates[selectedCurrency] ?? 1))
+    : numericValue;
 
   return (
     <motion.div
@@ -65,17 +74,13 @@ export function KpiCard({ metric, index = 0, onClick }: KpiCardProps) {
       <div className="relative">
         <div className="flex items-end gap-1">
           <span className="text-2xl font-bold text-foreground leading-none">
-            {metric.displayValue.startsWith("$") && (
-              <span className="text-lg text-muted-foreground mr-0.5">$</span>
+            {isRevenue && (
+              <span className="text-lg text-muted-foreground mr-0.5">{currencySymbol}</span>
             )}
             <AnimatedNumber
-              value={numericValue}
+              value={convertedValue}
               suffix={hasDecimals && metric.displayValue.includes("%") ? "%" : ""}
-              formatter={
-                metric.displayValue.startsWith("$")
-                  ? (n) => n.toLocaleString()
-                  : undefined
-              }
+              formatter={isRevenue ? (n) => n.toLocaleString() : undefined}
             />
           </span>
         </div>
