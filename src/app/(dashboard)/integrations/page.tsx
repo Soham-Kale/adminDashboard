@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "@/lib/constants/queryKeys";
-import apiClient from "@/lib/api/axios";
+import { fetchSyncStatus, triggerSync } from "@/lib/api/services";
 import { CheckCircle2, XCircle, RefreshCw, Database, Zap, Key, FileText } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import toast from "react-hot-toast";
@@ -12,19 +11,13 @@ import { formatRelativeDate } from "@/lib/utils/formatters";
 export default function IntegrationsPage() {
   const queryClient = useQueryClient();
 
-  const { data: statusData, isLoading } = useQuery({
+  const { data: statusData } = useQuery({
     queryKey: queryKeys.notion.status(),
-    queryFn: async () => {
-      const res = await apiClient.get("/api/notion/sync");
-      return res.data;
-    },
+    queryFn: fetchSyncStatus,
   });
 
   const syncMutation = useMutation({
-    mutationFn: async () => {
-      const res = await apiClient.post("/api/notion/sync");
-      return res.data;
-    },
+    mutationFn: triggerSync,
     onSuccess: (data) => {
       if (data.success) {
         toast.success(data.message);

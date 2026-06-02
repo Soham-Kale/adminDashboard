@@ -1,6 +1,6 @@
 "use client";
 
-import { useRevenue } from "@/hooks/useRevenue";
+import { useRevenueHistory, useFailedPayments } from "@/hooks/useRevenue";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { DataTable } from "@/components/tables/DataTable";
 import { TableToolbar } from "@/components/tables/TableToolbar";
@@ -28,8 +28,8 @@ function StatCard({ label, value, icon: Icon, color }: { label: string; value: s
 }
 
 export default function RevenuePage() {
-  const { data: revenueData, isLoading } = useRevenue("history");
-  const { data: failedData, isLoading: failedLoading } = useRevenue("failed");
+  const { data: revenueData, isLoading } = useRevenueHistory();
+  const { data: failedData, isLoading: failedLoading } = useFailedPayments();
   const { data: analytics, isLoading: analyticsLoading } = useAnalytics();
 
   const stats = revenueData?.stats;
