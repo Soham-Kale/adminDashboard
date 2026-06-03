@@ -12,7 +12,6 @@ import { KPI_COLORS } from "@/lib/constants/chartColors";
 import { cn } from "@/lib/utils/cn";
 import type { KpiMetric } from "@/types/metrics";
 import { LineChart, Line, ResponsiveContainer } from "recharts";
-import { useCurrencyStore, CURRENCY_SYMBOLS } from "@/store/currencyStore";
 
 const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   UserPlus, Clock, UserMinus, UserCheck, CreditCard, Users, XCircle,
@@ -29,17 +28,17 @@ interface KpiCardProps {
 export function KpiCard({ metric, index = 0, onClick }: KpiCardProps) {
   const Icon = ICON_MAP[metric.icon] ?? BarChart2;
   const colors = KPI_COLORS[metric.color];
-  const numericValue = typeof metric.value === "number" ? metric.value : parseFloat(String(metric.value));
-  const hasDecimals = metric.displayValue.includes("%") || metric.displayValue.includes(".");
   const sparkData = metric.sparklineData?.map((v, i) => ({ i, v })) ?? [];
 
-  // Currency conversion for the revenue KPI
-  const { selectedCurrency, exchangeRates } = useCurrencyStore();
+  // Revenue: value is now { INR?: number, CAD?: number, USD?: number }
+  // Backend provides a pre-formatted displayValue string e.g. "INR $422,161 | CAD $540"
   const isRevenue = metric.id === "revenue";
-  const currencySymbol = CURRENCY_SYMBOLS[selectedCurrency];
-  const convertedValue = isRevenue
-    ? Math.round((numericValue / (exchangeRates["USD"] ?? 1)) * (exchangeRates[selectedCurrency] ?? 1))
-    : numericValue;
+
+  // For non-revenue metrics: animate the number
+  const numericValue = !isRevenue
+    ? typeof metric.value === "number" ? metric.value : parseFloat(String(metric.value)) || 0
+    : 0;
+  const hasPercentSuffix = !isRevenue && metric.displayValue.includes("%");
 
   return (
     <motion.div
@@ -73,16 +72,19 @@ export function KpiCard({ metric, index = 0, onClick }: KpiCardProps) {
 
       <div className="relative">
         <div className="flex items-end gap-1">
-          <span className="text-2xl font-bold text-foreground leading-none">
-            {isRevenue && (
-              <span className="text-lg text-muted-foreground mr-0.5">{currencySymbol}</span>
-            )}
-            <AnimatedNumber
-              value={convertedValue}
-              suffix={hasDecimals && metric.displayValue.includes("%") ? "%" : ""}
-              formatter={isRevenue ? (n) => n.toLocaleString() : undefined}
-            />
-          </span>
+          {isRevenue ? (
+            // Revenue: use backend's pre-formatted displayValue directly
+            <span className="text-lg font-bold text-foreground leading-none break-all">
+              {metric.displayValue}
+            </span>
+          ) : (
+            <span className="text-2xl font-bold text-foreground leading-none">
+              <AnimatedNumber
+                value={numericValue}
+                suffix={hasPercentSuffix ? "%" : ""}
+              />
+            </span>
+          )}
         </div>
         <p className="text-xs font-medium text-foreground mt-1">{metric.label}</p>
         <p className="text-xs text-muted-foreground mt-0.5">{metric.description}</p>

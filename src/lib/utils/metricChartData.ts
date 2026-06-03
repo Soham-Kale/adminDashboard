@@ -45,7 +45,13 @@ function sliceByRange(data: DailyPoint[], range: TimeRange): DailyPoint[] {
 
 function getFieldValue(point: DailyPoint, metricId: string): number {
   const field = METRIC_FIELD_MAP[metricId] ?? "subscriptions";
-  return (point[field] as number) ?? 0;
+  const val = point[field];
+  // revenue is now a per-currency dict — pick the highest value
+  if (field === "revenue" && val !== null && typeof val === "object") {
+    const values = Object.values(val as Record<string, number>);
+    return values.length > 0 ? Math.max(...values) : 0;
+  }
+  return (val as number) ?? 0;
 }
 
 function computeStats(values: number[]): MetricStats {

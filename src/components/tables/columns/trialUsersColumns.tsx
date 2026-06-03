@@ -22,6 +22,13 @@ export const trialUsersColumns: ColumnDef<Subscriber, unknown>[] = [
     ),
   },
   {
+    accessorKey: "sport",
+    header: "Sport",
+    cell: ({ getValue }) => (
+      <span className="text-xs">{(getValue() as string | null) || "—"}</span>
+    ),
+  },
+  {
     accessorKey: "trialStatus",
     header: "Trial",
     cell: ({ getValue }) => (

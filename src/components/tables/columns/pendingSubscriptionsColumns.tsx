@@ -22,6 +22,13 @@ export const pendingSubscriptionsColumns: ColumnDef<Subscriber, unknown>[] = [
     ),
   },
   {
+    accessorKey: "sport",
+    header: "Sport",
+    cell: ({ getValue }) => (
+      <span className="text-xs">{(getValue() as string | null) || "—"}</span>
+    ),
+  },
+  {
     accessorKey: "planName",
     header: "Plan",
     cell: ({ getValue }) => <span className="text-xs">{getValue() as string}</span>,

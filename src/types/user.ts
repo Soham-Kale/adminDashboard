@@ -8,17 +8,10 @@ export interface AdminUser {
   createdAt: string;
 }
 
+// /admin/users now returns only 4 fields — no subscription data
 export interface AppUser {
   id: string;
   userName: string;
   email: string;
-  phoneNumber: string | null;
   onboardedAt: string;
-  isActive: boolean;
-  hasSubscription: boolean;
-  subscriptionId: string | null;
-  subscriptionStatus: string | null;
-  planName: string | null;
-  billingCycle: string | null;
-  provider: string | null;
 }

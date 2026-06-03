@@ -3,8 +3,7 @@ export const runtime = 'edge';
 import { NextResponse } from "next/server";
 import { backendGet } from "@/lib/api/backendClient";
 
-// Fetch the total count for a given subscription status (or all).
-// Uses page_size=1 to minimise payload — only meta.total matters.
+// Fetch the total count for a given subscription status (or all subscriptions).
 async function getCount(status?: string): Promise<number> {
   try {
     const qs = status
@@ -12,6 +11,18 @@ async function getCount(status?: string): Promise<number> {
       : `?page=1&page_size=1`;
     const res = await backendGet<{ meta: { total: number } }>(
       `/admin/subscriptions${qs}`
+    );
+    return res.meta?.total ?? 0;
+  } catch {
+    return 0;
+  }
+}
+
+// Fetch total registered platform users from /admin/users (not subscriptions).
+async function getTotalUsers(): Promise<number> {
+  try {
+    const res = await backendGet<{ meta: { total: number } }>(
+      "/admin/users?page=1&page_size=1"
     );
     return res.meta?.total ?? 0;
   } catch {
@@ -48,7 +59,7 @@ export async function GET() {
       getCount("cancelled"),
       getCount("pending"),
       getCount("paused"),
-      getCount(),
+      getTotalUsers(),   // real platform user count from /admin/users
       backendGet<{
         data: {
           daily: Array<{ subscriptions: number; cancellations: number; revenue: Record<string,number>; trials: number; onboarded: number }>;
@@ -74,7 +85,7 @@ export async function GET() {
     const today     = comparative?.today     ?? { subscriptions: 0, cancellations: 0, revenue: {} as Record<string,number>, trials: 0, onboarded: 0 };
     const yesterday = comparative?.yesterday ?? { subscriptions: 0, cancellations: 0, revenue: {} as Record<string,number>, trials: 0, onboarded: 0 };
 
-    // 7-day sparkline arrays (oldest → newest)
+    // 7-day sparkline arrays (oldest → newest) — all from real API daily data
     const last7        = daily.slice(-7);
     const pad7         = (arr: number[]) => [...Array(Math.max(0, 7 - arr.length)).fill(0), ...arr].slice(-7);
     const sparkSubs    = pad7(last7.map((d) => d.subscriptions));
@@ -82,6 +93,17 @@ export async function GET() {
     const sparkOnboard = pad7(last7.map((d) => d.onboarded));
     const sparkRevenue = pad7(last7.map((d) => pickRevenue(d.revenue)));
     const sparkTrials  = pad7(last7.map((d) => d.trials));
+
+    // Rate sparklines — computed from daily data (real trend, not flat line)
+    const sparkChurn = pad7(last7.map((d) => {
+      const denom = d.subscriptions + d.cancellations;
+      return denom > 0 ? Math.round((d.cancellations / denom) * 1000) / 10 : 0;
+    }));
+    const sparkConversion = pad7(last7.map((d) => {
+      const denom = d.subscriptions + d.trials;
+      return denom > 0 ? Math.round((d.subscriptions / denom) * 1000) / 10 : 0;
+    }));
+    const sparkRetention = sparkChurn.map((c) => Math.round((100 - c) * 10) / 10);
 
     // Revenue — pick highest currency value (do NOT sum across currencies)
     const currentMonthRevenue = pickRevenue(monthly.at(-1)?.revenue) || pickRevenue(today.revenue) * 30;
@@ -120,7 +142,7 @@ export async function GET() {
         value: pendingCount, displayValue: String(pendingCount),
         delta: 0, deltaDirection: "neutral",
         description: "Pending completions",
-        color: "orange", icon: "Clock", sparklineData: Array(7).fill(Math.floor(pendingCount / 7) || 0),
+        color: "orange", icon: "Clock", sparklineData: [], // no per-day historical data available
       },
       cancelledToday: {
         id: "cancelled_today", label: "Cancelled Today",
@@ -134,7 +156,7 @@ export async function GET() {
         value: pausedCount, displayValue: String(pausedCount),
         delta: 0, deltaDirection: "neutral",
         description: "Access paused",
-        color: "yellow", icon: "UserCheck", sparklineData: Array(7).fill(0),
+        color: "yellow", icon: "UserCheck", sparklineData: [], // no per-day historical data available
       },
       trialEndedChargedToday: {
         id: "trial_ended_charged_today", label: "Trial → Charged Today",
@@ -180,21 +202,21 @@ export async function GET() {
         value: conversionRate, displayValue: `${conversionRate}%`,
         delta: 0, deltaDirection: "neutral",
         description: "Trial → Paid",
-        color: "purple", icon: "TrendingUp", sparklineData: Array(7).fill(conversionRate),
+        color: "purple", icon: "TrendingUp", sparklineData: sparkConversion, // daily conversion rate from real API data
       },
       churnRate: {
         id: "churn_rate", label: "Churn Rate",
         value: churnRate, displayValue: `${churnRate}%`,
         delta: 0, deltaDirection: "neutral",
         description: "All-time cancellation rate",
-        color: "orange", icon: "TrendingDown", sparklineData: Array(7).fill(churnRate),
+        color: "orange", icon: "TrendingDown", sparklineData: sparkChurn, // daily churn rate from real API data
       },
       retentionRate: {
         id: "retention_rate", label: "Retention Rate",
         value: retentionRate, displayValue: `${retentionRate}%`,
         delta: 0, deltaDirection: "neutral",
         description: `${retentionRate}% of users retained`,
-        color: "green", icon: "Shield", sparklineData: Array(7).fill(retentionRate),
+        color: "green", icon: "Shield", sparklineData: sparkRetention, // daily retention rate from real API data
       },
       monthlyGrowth: {
         id: "monthly_growth", label: "Monthly Growth",
@@ -209,7 +231,9 @@ export async function GET() {
         value: totalCount, displayValue: String(totalCount),
         delta: 0, deltaDirection: "neutral",
         description: "All registered users",
-        color: "blue", icon: "Users2", sparklineData: Array(7).fill(Math.floor(totalCount / 7) || 0),
+        color: "blue", icon: "Users2",
+        // sparkline = daily new registrations (onboarded) last 7 days — real API data
+        sparklineData: sparkOnboard,
       },
       dailyActiveUsers: {
         id: "daily_active_users", label: "Daily Active Users",
