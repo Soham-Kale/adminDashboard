@@ -15,6 +15,7 @@ export interface Subscriber {
   userSubscriptionId: number | string;
   userName: string;
   email: string;
+  phoneNumber?: string | null;
   planName: string;
   planCode: string;
   billingCycle: BillingCycle;

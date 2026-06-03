@@ -51,11 +51,11 @@ export async function GET() {
       getCount(),
       backendGet<{
         data: {
-          daily: Array<{ subscriptions: number; cancellations: number; revenue: number; trials: number; onboarded: number }>;
-          monthly: Array<{ subscriptions: number; revenue: number; growth: number }>;
+          daily: Array<{ subscriptions: number; cancellations: number; revenue: Record<string,number>; trials: number; onboarded: number }>;
+          monthly: Array<{ subscriptions: number; revenue: Record<string,number>; growth: number }>;
           comparative: {
-            today: { subscriptions: number; cancellations: number; revenue: number; trials: number; onboarded: number };
-            yesterday: { subscriptions: number; cancellations: number; revenue: number; trials: number; onboarded: number };
+            today: { subscriptions: number; cancellations: number; revenue: Record<string,number>; trials: number; onboarded: number };
+            yesterday: { subscriptions: number; cancellations: number; revenue: Record<string,number>; trials: number; onboarded: number };
           };
         };
       }>("/admin/analytics?range=1m"),
@@ -63,9 +63,16 @@ export async function GET() {
 
     const { daily = [], monthly = [], comparative } = analyticsRes?.data ?? {};
 
+    // Pick the highest-value currency from a revenue dict (never sum across currencies)
+    function pickRevenue(rev: Record<string,number> | undefined): number {
+      if (!rev || typeof rev !== "object") return 0;
+      const vals = Object.values(rev);
+      return vals.length > 0 ? Math.max(...vals) : 0;
+    }
+
     // Today / yesterday snapshot values
-    const today     = comparative?.today     ?? { subscriptions: 0, cancellations: 0, revenue: 0, trials: 0, onboarded: 0 };
-    const yesterday = comparative?.yesterday ?? { subscriptions: 0, cancellations: 0, revenue: 0, trials: 0, onboarded: 0 };
+    const today     = comparative?.today     ?? { subscriptions: 0, cancellations: 0, revenue: {} as Record<string,number>, trials: 0, onboarded: 0 };
+    const yesterday = comparative?.yesterday ?? { subscriptions: 0, cancellations: 0, revenue: {} as Record<string,number>, trials: 0, onboarded: 0 };
 
     // 7-day sparkline arrays (oldest → newest)
     const last7        = daily.slice(-7);
@@ -73,12 +80,12 @@ export async function GET() {
     const sparkSubs    = pad7(last7.map((d) => d.subscriptions));
     const sparkCancels = pad7(last7.map((d) => d.cancellations));
     const sparkOnboard = pad7(last7.map((d) => d.onboarded));
-    const sparkRevenue = pad7(last7.map((d) => d.revenue));
+    const sparkRevenue = pad7(last7.map((d) => pickRevenue(d.revenue)));
     const sparkTrials  = pad7(last7.map((d) => d.trials));
 
-    // Revenue
-    const currentMonthRevenue = monthly.at(-1)?.revenue ?? today.revenue * 30;
-    const lastMonthRevenue    = monthly.at(-2)?.revenue ?? 0;
+    // Revenue — pick highest currency value (do NOT sum across currencies)
+    const currentMonthRevenue = pickRevenue(monthly.at(-1)?.revenue) || pickRevenue(today.revenue) * 30;
+    const lastMonthRevenue    = pickRevenue(monthly.at(-2)?.revenue);
     const revGrowth = lastMonthRevenue > 0
       ? Math.round(((currentMonthRevenue - lastMonthRevenue) / lastMonthRevenue) * 1000) / 10
       : 0;

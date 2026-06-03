@@ -6,30 +6,36 @@ import {
 } from "recharts";
 import { ChartWrapper } from "./ChartWrapper";
 import { CHART_COLORS, TOOLTIP_STYLE } from "@/lib/constants/chartColors";
-import { useCurrency } from "@/hooks/useCurrency";
+import { useCurrencyStore } from "@/store/currencyStore";
+import { pickRevenue } from "@/lib/api/services";
 
 interface Props {
-  data: Array<{ month: string; revenue: number; subscriptions: number }>;
+  data: Array<{ month: string; revenue: Record<string, number> | number; subscriptions: number }>;
   isLoading?: boolean;
   isError?: boolean;
 }
 
+function formatAxis(v: number): string {
+  if (v >= 1_000_000) return `${(v / 1_000_000).toFixed(1)}M`;
+  if (v >= 1_000)     return `${(v / 1_000).toFixed(1)}k`;
+  return String(v);
+}
+
 export function MonthlyRevenueAnalytics({ data, isLoading, isError }: Props) {
-  const { convertAmount, formatRevenue, symbol } = useCurrency();
+  const { selectedCurrency } = useCurrencyStore();
   const lastIndex = (data?.length ?? 1) - 1;
 
   const converted = data?.map((d) => ({
     ...d,
-    revenue: Math.round(convertAmount(d.revenue)),
+    revenue: typeof d.revenue === "object"
+      ? pickRevenue(d.revenue, selectedCurrency)
+      : (d.revenue ?? 0),
   }));
-
-  const axisFormatter = (v: number) =>
-    v >= 1000 ? `${symbol}${(v / 1000).toFixed(1)}k` : `${symbol}${v}`;
 
   return (
     <ChartWrapper
       title="Monthly Revenue Analytics"
-      description="Revenue trend over the last 12 months"
+      description={`Revenue by ${selectedCurrency} — other currencies shown at their native value`}
       isLoading={isLoading}
       isError={isError}
       isEmpty={!data?.length}
@@ -39,9 +45,9 @@ export function MonthlyRevenueAnalytics({ data, isLoading, isError }: Props) {
         <BarChart data={converted} margin={{ top: 4, right: 4, bottom: 0, left: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="hsl(240 3.7% 15.9%)" vertical={false} />
           <XAxis dataKey="month" tick={{ fontSize: 10, fill: "hsl(240 5% 64.9%)" }} tickLine={false} axisLine={false} />
-          <YAxis tickFormatter={axisFormatter} tick={{ fontSize: 10, fill: "hsl(240 5% 64.9%)" }} tickLine={false} axisLine={false} />
+          <YAxis tickFormatter={formatAxis} tick={{ fontSize: 10, fill: "hsl(240 5% 64.9%)" }} tickLine={false} axisLine={false} />
           <Tooltip
-            formatter={(v: unknown) => [formatRevenue(Number(v)), "Revenue"]}
+            formatter={(v: unknown) => [`${selectedCurrency} ${Number(v).toLocaleString()}`, "Revenue"]}
             contentStyle={TOOLTIP_STYLE.contentStyle}
             labelStyle={TOOLTIP_STYLE.labelStyle}
             itemStyle={TOOLTIP_STYLE.itemStyle}

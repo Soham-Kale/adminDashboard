@@ -6,10 +6,12 @@ import {
 } from "recharts";
 import { ChartWrapper } from "./ChartWrapper";
 import { CHART_COLORS, TOOLTIP_STYLE } from "@/lib/constants/chartColors";
+import { useCurrencyStore } from "@/store/currencyStore";
+import { pickRevenue } from "@/lib/api/services";
 
 interface ComparativeData {
-  today: Record<string, number>;
-  yesterday: Record<string, number>;
+  today: Record<string, unknown>;
+  yesterday: Record<string, unknown>;
 }
 
 interface Props {
@@ -19,13 +21,22 @@ interface Props {
 }
 
 export function ComparativeAnalytics({ data, isLoading, isError }: Props) {
+  const { selectedCurrency } = useCurrencyStore();
+
+  function getRevenue(rev: unknown): number {
+    if (!rev) return 0;
+    if (typeof rev === "object") return pickRevenue(rev as Record<string,number>, selectedCurrency);
+    if (typeof rev === "number") return Math.round(rev);
+    return 0;
+  }
+
   const chartData = data
     ? [
-        { metric: "Subs", today: data.today.subscriptions, yesterday: data.yesterday.subscriptions },
-        { metric: "Cancels", today: data.today.cancellations, yesterday: data.yesterday.cancellations },
-        { metric: "Revenue", today: Math.round(data.today.revenue / 100), yesterday: Math.round(data.yesterday.revenue / 100) },
-        { metric: "Trials", today: data.today.trials, yesterday: data.yesterday.trials },
-        { metric: "Onboarded", today: data.today.onboarded, yesterday: data.yesterday.onboarded },
+        { metric: "Subs",     today: data.today.subscriptions,     yesterday: data.yesterday.subscriptions },
+        { metric: "Cancels",  today: data.today.cancellations,     yesterday: data.yesterday.cancellations },
+        { metric: "Revenue",  today: getRevenue(data.today.revenue), yesterday: getRevenue(data.yesterday.revenue) },
+        { metric: "Trials",   today: data.today.trials,            yesterday: data.yesterday.trials },
+        { metric: "Onboarded",today: data.today.onboarded,         yesterday: data.yesterday.onboarded },
       ]
     : [];
 

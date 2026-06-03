@@ -5,7 +5,7 @@ import { ChartWrapper } from "./ChartWrapper";
 import { CHART_COLORS, TOOLTIP_STYLE } from "@/lib/constants/chartColors";
 
 interface Props {
-  data?: Array<{ month: string; revenue: number; growth: number }>;
+  data?: Array<{ month: string; revenue: Record<string,number> | number; growth: number }>;
   isLoading?: boolean;
   isError?: boolean;
 }

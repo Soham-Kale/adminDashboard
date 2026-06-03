@@ -30,15 +30,17 @@ export interface UsersResponse {
     id: string;
     userName: string;
     email: string;
-    country: string;
-    sport: string;
-    deviceType: string;
-    referralSource: string;
+    phoneNumber: string | null;
     onboardedAt: string;
-    subscriptionId: string;
     isActive: boolean;
+    hasSubscription: boolean;
+    subscriptionId: string | null;
+    subscriptionStatus: string | null;
+    planName: string | null;
+    billingCycle: string | null;
+    provider: string | null;
   }>;
-  meta: { source: string; total: number };
+  meta: { source: string; total: number; page: number; pageSize: number };
 }
 
 export interface RevenueHistoryResponse {
@@ -52,13 +54,28 @@ export interface RevenueFailedResponse {
   meta: { source: string; total: number };
 }
 
+/** Revenue broken down by currency code. Never sum across currencies. */
+export type RevenueByCurrency = { [currency: string]: number };
+
+/** Pick revenue for a preferred currency; fall back to the first available value. */
+export function pickRevenue(
+  revenue: RevenueByCurrency | number | undefined,
+  preferredCurrency: string
+): number {
+  if (!revenue) return 0;
+  if (typeof revenue === "number") return revenue; // old shape safety
+  if (revenue[preferredCurrency] !== undefined) return revenue[preferredCurrency];
+  const values = Object.values(revenue);
+  return values.length > 0 ? Math.max(...values) : 0;
+}
+
 export interface AnalyticsData {
   daily: Array<{
     date: string;
     fullDate: string;
     subscriptions: number;
     cancellations: number;
-    revenue: number;
+    revenue: RevenueByCurrency;   // e.g. { INR: 422161, CAD: 540 }
     trials: number;
     onboarded: number;
   }>;
@@ -72,7 +89,7 @@ export interface AnalyticsData {
   }>;
   monthly: Array<{
     month: string;
-    revenue: number;
+    revenue: RevenueByCurrency;   // e.g. { INR: 422161, CAD: 540 }
     subscriptions: number;
     growth: number;
   }>;
@@ -81,13 +98,12 @@ export interface AnalyticsData {
   funnel: Array<{ stage: string; value: number; percentage: number }>;
   heatmap: Array<{ day: string; hour: number; value: number }>;
   comparative: {
-    today: { subscriptions: number; cancellations: number; revenue: number; trials: number; onboarded: number };
-    yesterday: { subscriptions: number; cancellations: number; revenue: number; trials: number; onboarded: number };
+    today:     { subscriptions: number; cancellations: number; revenue: RevenueByCurrency; trials: number; onboarded: number };
+    yesterday: { subscriptions: number; cancellations: number; revenue: RevenueByCurrency; trials: number; onboarded: number };
   };
   sports: Array<{ sport: string; users: number; percentage: number }>;
   sportStatus: Array<{ sport: string; active: number; trial: number; cancelled: number }>;
   regions: Array<{ region: string; users: number; percentage: number }>;
-  // From real backend — billing cycle, payment provider, plan distribution
   billingBreakdown?: Array<{ cycle: string; value: number; percentage: number }>;
   providers?: Array<{ provider: string; value: number; percentage: number }>;
   plans?: Array<{ plan: string; value: number; percentage: number }>;

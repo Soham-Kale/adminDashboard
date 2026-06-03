@@ -6,7 +6,7 @@ interface DailyPoint {
   fullDate?: string;
   subscriptions: number;
   cancellations: number;
-  revenue: number;
+  revenue: Record<string,number> | number;
   trials: number;
   onboarded: number;
 }

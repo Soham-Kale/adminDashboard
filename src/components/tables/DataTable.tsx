@@ -21,6 +21,14 @@ interface DataTableProps<TData> {
   toolbar?: (table: ReturnType<typeof useReactTable<TData>>) => React.ReactNode;
   className?: string;
   pageSize?: number;
+  /** Server-side pagination — pass when the API pages data, not the client */
+  serverPagination?: {
+    totalRows: number;
+    page: number;
+    pageSize: number;
+    onPageChange: (page: number) => void;
+    onPageSizeChange: (size: number) => void;
+  };
 }
 
 export function DataTable<TData>({
@@ -29,19 +37,31 @@ export function DataTable<TData>({
   toolbar,
   className,
   pageSize = 10,
+  serverPagination,
 }: DataTableProps<TData>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
+  const isServer = Boolean(serverPagination);
 
   const table = useReactTable({
     data,
     columns,
-    state: { sorting, globalFilter },
+    state: {
+      sorting,
+      globalFilter: isServer ? undefined : globalFilter,
+      ...(isServer && serverPagination
+        ? { pagination: { pageIndex: serverPagination.page - 1, pageSize: serverPagination.pageSize } }
+        : {}),
+    },
+    manualPagination: isServer,
+    pageCount: isServer && serverPagination
+      ? Math.ceil(serverPagination.totalRows / serverPagination.pageSize)
+      : undefined,
     onSortingChange: setSorting,
-    onGlobalFilterChange: setGlobalFilter,
+    onGlobalFilterChange: isServer ? undefined : setGlobalFilter,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
+    getFilteredRowModel: isServer ? getCoreRowModel() : getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     initialState: { pagination: { pageSize } },
   });
@@ -116,31 +136,47 @@ export function DataTable<TData>({
 
       <div className="flex items-center justify-between text-xs text-muted-foreground">
         <span>
-          Showing {table.getRowModel().rows.length} of {table.getFilteredRowModel().rows.length} results
+          {isServer && serverPagination
+            ? `${((serverPagination.page - 1) * serverPagination.pageSize) + 1}–${Math.min(serverPagination.page * serverPagination.pageSize, serverPagination.totalRows)} of ${serverPagination.totalRows.toLocaleString()} records`
+            : `Showing ${table.getRowModel().rows.length} of ${table.getFilteredRowModel().rows.length} results`}
         </span>
         <div className="flex items-center gap-2">
           <select
-            value={table.getState().pagination.pageSize}
-            onChange={(e) => table.setPageSize(Number(e.target.value))}
+            value={isServer && serverPagination ? serverPagination.pageSize : table.getState().pagination.pageSize}
+            onChange={(e) => {
+              const s = Number(e.target.value);
+              if (isServer && serverPagination) { serverPagination.onPageSizeChange(s); serverPagination.onPageChange(1); }
+              else table.setPageSize(s);
+            }}
             className="bg-background border border-border rounded px-2 py-1 text-xs"
           >
-            {[10, 25, 50, 100].map((s) => (
+            {[25, 50, 100].map((s) => (
               <option key={s} value={s}>{s} per page</option>
             ))}
           </select>
           <button
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
+            onClick={() => isServer && serverPagination
+              ? serverPagination.onPageChange(serverPagination.page - 1)
+              : table.previousPage()}
+            disabled={isServer && serverPagination ? serverPagination.page <= 1 : !table.getCanPreviousPage()}
             className="px-2 py-1 border border-border rounded disabled:opacity-40 hover:bg-accent transition-colors"
           >
             ←
           </button>
           <span>
-            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+            Page {isServer && serverPagination ? serverPagination.page : table.getState().pagination.pageIndex + 1}
+            {" "}of{" "}
+            {isServer && serverPagination
+              ? Math.ceil(serverPagination.totalRows / serverPagination.pageSize)
+              : table.getPageCount()}
           </span>
           <button
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
+            onClick={() => isServer && serverPagination
+              ? serverPagination.onPageChange(serverPagination.page + 1)
+              : table.nextPage()}
+            disabled={isServer && serverPagination
+              ? serverPagination.page >= Math.ceil(serverPagination.totalRows / serverPagination.pageSize)
+              : !table.getCanNextPage()}
             className="px-2 py-1 border border-border rounded disabled:opacity-40 hover:bg-accent transition-colors"
           >
             →

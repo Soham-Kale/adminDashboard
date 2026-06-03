@@ -12,11 +12,13 @@ export interface AppUser {
   id: string;
   userName: string;
   email: string;
-  country: string;
-  sport: string;
-  deviceType: string;
-  referralSource: string;
+  phoneNumber: string | null;
   onboardedAt: string;
-  subscriptionId?: string;
   isActive: boolean;
+  hasSubscription: boolean;
+  subscriptionId: string | null;
+  subscriptionStatus: string | null;
+  planName: string | null;
+  billingCycle: string | null;
+  provider: string | null;
 }

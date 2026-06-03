@@ -15,6 +15,13 @@ export const cancelledUsersColumns: ColumnDef<Subscriber, unknown>[] = [
     cell: ({ getValue }) => <span className="text-muted-foreground">{getValue() as string}</span>,
   },
   {
+    accessorKey: "phoneNumber",
+    header: "Phone",
+    cell: ({ getValue }) => (
+      <span className="text-xs font-mono">{(getValue() as string | null) || "—"}</span>
+    ),
+  },
+  {
     accessorKey: "planName",
     header: "Plan",
     cell: ({ getValue }) => <span className="text-xs">{getValue() as string}</span>,
