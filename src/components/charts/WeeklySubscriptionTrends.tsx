@@ -5,7 +5,7 @@ import {
   ResponsiveContainer, Legend,
 } from "recharts";
 import { ChartWrapper } from "./ChartWrapper";
-import { CHART_COLORS } from "@/lib/constants/chartColors";
+import { CHART_COLORS, TOOLTIP_STYLE } from "@/lib/constants/chartColors";
 
 interface Props {
   data: Array<{ week: string; subscriptions: number; trials: number; active: number }>;
@@ -38,7 +38,9 @@ export function WeeklySubscriptionTrends({ data, isLoading, isError }: Props) {
           <CartesianGrid strokeDasharray="3 3" stroke="hsl(240 3.7% 15.9%)" />
           <XAxis dataKey="week" tick={{ fontSize: 10, fill: "hsl(240 5% 64.9%)" }} tickLine={false} axisLine={false} />
           <YAxis tick={{ fontSize: 10, fill: "hsl(240 5% 64.9%)" }} tickLine={false} axisLine={false} />
-          <Tooltip contentStyle={{ background: "hsl(240 10% 5.9%)", border: "1px solid hsl(240 3.7% 15.9%)", borderRadius: 8, fontSize: 12 }} />
+          <Tooltip contentStyle={TOOLTIP_STYLE.contentStyle}
+            labelStyle={TOOLTIP_STYLE.labelStyle}
+            itemStyle={TOOLTIP_STYLE.itemStyle} />
           <Legend wrapperStyle={{ fontSize: 11 }} />
           <Area type="monotone" dataKey="subscriptions" stroke={CHART_COLORS.blue} fill="url(#colorSubs)" strokeWidth={2} name="Subscriptions" />
           <Area type="monotone" dataKey="trials" stroke={CHART_COLORS.purple} fill="url(#colorTrials)" strokeWidth={2} name="Trials" />

@@ -2,7 +2,7 @@
 
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { ChartWrapper } from "./ChartWrapper";
-import { PIE_COLORS } from "@/lib/constants/chartColors";
+import { PIE_COLORS, TOOLTIP_STYLE } from "@/lib/constants/chartColors";
 
 interface Props {
   data?: Array<{ name: string; value: number }>;
@@ -43,7 +43,9 @@ export function SubscriptionStatusPie({ data = DEFAULT_DATA, isLoading, isError 
             ))}
           </Pie>
           <Tooltip
-            contentStyle={{ background: "hsl(240 10% 5.9%)", border: "1px solid hsl(240 3.7% 15.9%)", borderRadius: 8, fontSize: 12 }}
+            contentStyle={TOOLTIP_STYLE.contentStyle}
+            labelStyle={TOOLTIP_STYLE.labelStyle}
+            itemStyle={TOOLTIP_STYLE.itemStyle}
           />
           <Legend wrapperStyle={{ fontSize: 11 }} />
         </PieChart>

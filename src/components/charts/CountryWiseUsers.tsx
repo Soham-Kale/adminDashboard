@@ -2,7 +2,7 @@
 
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import { ChartWrapper } from "./ChartWrapper";
-import { PIE_COLORS } from "@/lib/constants/chartColors";
+import { PIE_COLORS, TOOLTIP_STYLE } from "@/lib/constants/chartColors";
 
 interface Props {
   data?: Array<{ country: string; users: number; percentage: number }>;
@@ -13,8 +13,8 @@ interface Props {
 export function CountryWiseUsers({ data, isLoading, isError }: Props) {
   return (
     <ChartWrapper
-      title="Users by Country"
-      description="Geographic distribution"
+      title="Users by Payment Currency"
+      description="Approximated from subscriber payment currency — USD may include multiple countries"
       isLoading={isLoading}
       isError={isError}
       isEmpty={!data?.length}
@@ -26,8 +26,10 @@ export function CountryWiseUsers({ data, isLoading, isError }: Props) {
           <XAxis type="number" tick={{ fontSize: 10, fill: "hsl(240 5% 64.9%)" }} tickLine={false} axisLine={false} />
           <YAxis type="category" dataKey="country" tick={{ fontSize: 10, fill: "hsl(240 5% 64.9%)" }} tickLine={false} axisLine={false} width={90} />
           <Tooltip
-            formatter={(v: unknown, _: unknown, props: { payload?: { percentage?: number } }) => [`${v} users (${props.payload?.percentage ?? 0}%)`, "Users"]}
-            contentStyle={{ background: "hsl(240 10% 5.9%)", border: "1px solid hsl(240 3.7% 15.9%)", borderRadius: 8, fontSize: 12 }}
+            formatter={(v: unknown, _: unknown, props: { payload?: { percentage?: number } }) => [`${v} subscribers · currency-derived (${props.payload?.percentage ?? 0}%)`, ""]}
+            contentStyle={TOOLTIP_STYLE.contentStyle}
+            labelStyle={TOOLTIP_STYLE.labelStyle}
+            itemStyle={TOOLTIP_STYLE.itemStyle}
           />
           <Bar dataKey="users" radius={[0, 4, 4, 0]}>
             {data?.map((_, i) => (

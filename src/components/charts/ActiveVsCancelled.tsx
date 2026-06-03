@@ -5,7 +5,7 @@ import {
   ResponsiveContainer, Legend,
 } from "recharts";
 import { ChartWrapper } from "./ChartWrapper";
-import { CHART_COLORS } from "@/lib/constants/chartColors";
+import { CHART_COLORS, TOOLTIP_STYLE } from "@/lib/constants/chartColors";
 
 interface Props {
   data: Array<{ date: string; subscriptions: number; cancellations: number }>;
@@ -29,7 +29,9 @@ export function ActiveVsCancelled({ data, isLoading, isError }: Props) {
           <CartesianGrid strokeDasharray="3 3" stroke="hsl(240 3.7% 15.9%)" vertical={false} />
           <XAxis dataKey="date" tick={{ fontSize: 10, fill: "hsl(240 5% 64.9%)" }} tickLine={false} axisLine={false} />
           <YAxis tick={{ fontSize: 10, fill: "hsl(240 5% 64.9%)" }} tickLine={false} axisLine={false} />
-          <Tooltip contentStyle={{ background: "hsl(240 10% 5.9%)", border: "1px solid hsl(240 3.7% 15.9%)", borderRadius: 8, fontSize: 12 }} />
+          <Tooltip contentStyle={TOOLTIP_STYLE.contentStyle}
+            labelStyle={TOOLTIP_STYLE.labelStyle}
+            itemStyle={TOOLTIP_STYLE.itemStyle} />
           <Legend wrapperStyle={{ fontSize: 11 }} />
           <Bar dataKey="subscriptions" fill={CHART_COLORS.green} radius={[3, 3, 0, 0]} name="New Subs" fillOpacity={0.85} />
           <Bar dataKey="cancellations" fill={CHART_COLORS.red} radius={[3, 3, 0, 0]} name="Cancellations" fillOpacity={0.85} />

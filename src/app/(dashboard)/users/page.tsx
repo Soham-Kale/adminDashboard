@@ -123,7 +123,7 @@ export default function UsersPage() {
     <div className="space-y-5">
 
       {/* Total Users Banner */}
-      <div className="flex gap-4">
+      <div className="flex flex-col sm:flex-row gap-3">
         <StatTile
           icon={Users}
           label="Total Users"
@@ -149,17 +149,22 @@ export default function UsersPage() {
 
       {/* Sports Analytics */}
       <div>
-        <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-          <span className="text-base">🏅</span> Sports Analytics
-        </h3>
-        <div className="grid grid-cols-1 xl:grid-cols-7 gap-4">
-          <div className="xl:col-span-4">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+            <span className="text-base">🏅</span> Sports Analytics
+          </h3>
+          <span className="text-xs text-muted-foreground">
+            * Users with multiple sports are counted in each category
+          </span>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-7 gap-4">
+          <div className="md:col-span-4 xl:col-span-4">
             <SportWiseUsers
               data={analyticsData?.sports}
               isLoading={analyticsLoading}
             />
           </div>
-          <div className="xl:col-span-3">
+          <div className="md:col-span-3 xl:col-span-3">
             <SportSubscriptionStatus
               data={analyticsData?.sportStatus}
               isLoading={analyticsLoading}
@@ -173,14 +178,14 @@ export default function UsersPage() {
         <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
           <Globe className="h-4 w-4 text-muted-foreground" /> Geographic Distribution
         </h3>
-        <div className="grid grid-cols-1 xl:grid-cols-7 gap-4">
-          <div className="xl:col-span-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-7 gap-4">
+          <div className="md:col-span-4 xl:col-span-4">
             <CountryWiseUsers
               data={analyticsData?.countries}
               isLoading={analyticsLoading}
             />
           </div>
-          <div className="xl:col-span-3">
+          <div className="md:col-span-3 xl:col-span-3">
             <RegionWiseUsers
               data={analyticsData?.regions}
               isLoading={analyticsLoading}
@@ -190,14 +195,14 @@ export default function UsersPage() {
       </div>
 
       {/* Device + Onboarding */}
-      <div className="grid grid-cols-1 xl:grid-cols-7 gap-4">
-        <div className="xl:col-span-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-7 gap-4">
+        <div className="md:col-span-3 xl:col-span-3">
           <DeviceUsagePie
             data={analyticsData?.devices}
             isLoading={analyticsLoading}
           />
         </div>
-        <div className="xl:col-span-4">
+        <div className="md:col-span-4 xl:col-span-4">
           <UserOnboardingTrend
             data={analyticsData?.daily ?? []}
             isLoading={analyticsLoading}

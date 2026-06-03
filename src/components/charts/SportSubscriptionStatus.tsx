@@ -5,7 +5,7 @@ import {
   ResponsiveContainer, Legend,
 } from "recharts";
 import { ChartWrapper } from "./ChartWrapper";
-import { CHART_COLORS } from "@/lib/constants/chartColors";
+import { CHART_COLORS, TOOLTIP_STYLE } from "@/lib/constants/chartColors";
 
 interface Props {
   data?: Array<{ sport: string; active: number; trial: number; cancelled: number }>;
@@ -19,7 +19,7 @@ export function SportSubscriptionStatus({ data, isLoading, isError }: Props) {
   return (
     <ChartWrapper
       title="Sport × Subscription Status"
-      description="Active · Trial · Cancelled breakdown per sport"
+      description="Per sport selection — users with multiple sports appear in each row"
       isLoading={isLoading}
       isError={isError}
       isEmpty={!sorted.length}
@@ -48,12 +48,9 @@ export function SportSubscriptionStatus({ data, isLoading, isError }: Props) {
             width={82}
           />
           <Tooltip
-            contentStyle={{
-              background: "hsl(240 10% 5.9%)",
-              border: "1px solid hsl(240 3.7% 15.9%)",
-              borderRadius: 8,
-              fontSize: 12,
-            }}
+            contentStyle={TOOLTIP_STYLE.contentStyle}
+            labelStyle={TOOLTIP_STYLE.labelStyle}
+            itemStyle={TOOLTIP_STYLE.itemStyle}
           />
           <Legend wrapperStyle={{ fontSize: 11, paddingTop: 8 }} />
           <Bar dataKey="active" stackId="a" fill={CHART_COLORS.green} fillOpacity={0.85} name="Active" radius={[0, 0, 0, 0]} />

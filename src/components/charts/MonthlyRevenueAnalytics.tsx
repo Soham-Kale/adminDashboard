@@ -5,7 +5,7 @@ import {
   ResponsiveContainer, Cell,
 } from "recharts";
 import { ChartWrapper } from "./ChartWrapper";
-import { CHART_COLORS } from "@/lib/constants/chartColors";
+import { CHART_COLORS, TOOLTIP_STYLE } from "@/lib/constants/chartColors";
 import { useCurrency } from "@/hooks/useCurrency";
 
 interface Props {
@@ -42,7 +42,9 @@ export function MonthlyRevenueAnalytics({ data, isLoading, isError }: Props) {
           <YAxis tickFormatter={axisFormatter} tick={{ fontSize: 10, fill: "hsl(240 5% 64.9%)" }} tickLine={false} axisLine={false} />
           <Tooltip
             formatter={(v: unknown) => [formatRevenue(Number(v)), "Revenue"]}
-            contentStyle={{ background: "hsl(240 10% 5.9%)", border: "1px solid hsl(240 3.7% 15.9%)", borderRadius: 8, fontSize: 12 }}
+            contentStyle={TOOLTIP_STYLE.contentStyle}
+            labelStyle={TOOLTIP_STYLE.labelStyle}
+            itemStyle={TOOLTIP_STYLE.itemStyle}
           />
           <Bar dataKey="revenue" radius={[4, 4, 0, 0]}>
             {converted?.map((_, i) => (

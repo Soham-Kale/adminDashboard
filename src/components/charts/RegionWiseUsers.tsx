@@ -2,6 +2,7 @@
 
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { ChartWrapper } from "./ChartWrapper";
+import { TOOLTIP_STYLE } from "@/lib/constants/chartColors";
 
 interface Props {
   data?: Array<{ region: string; users: number; percentage: number }>;
@@ -22,8 +23,8 @@ export function RegionWiseUsers({ data, isLoading, isError }: Props) {
 
   return (
     <ChartWrapper
-      title="Users by Region"
-      description="Geographic distribution by world region"
+      title="Regions by Payment Currency"
+      description="Grouped from subscriber payment currency — not geolocation data"
       isLoading={isLoading}
       isError={isError}
       isEmpty={!data?.length}
@@ -52,12 +53,9 @@ export function RegionWiseUsers({ data, isLoading, isError }: Props) {
                   `${v} users (${props.payload?.percentage ?? 0}%)`,
                   "",
                 ]}
-                contentStyle={{
-                  background: "hsl(240 10% 5.9%)",
-                  border: "1px solid hsl(240 3.7% 15.9%)",
-                  borderRadius: 8,
-                  fontSize: 12,
-                }}
+                contentStyle={TOOLTIP_STYLE.contentStyle}
+            labelStyle={TOOLTIP_STYLE.labelStyle}
+            itemStyle={TOOLTIP_STYLE.itemStyle}
               />
             </PieChart>
           </ResponsiveContainer>

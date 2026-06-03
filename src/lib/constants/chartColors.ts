@@ -30,6 +30,34 @@ export const KPI_COLORS = {
   yellow: { bg: "bg-yellow-500/10", text: "text-yellow-400", border: "border-yellow-500/20", dot: "#eab308" },
 } as const;
 
+// Shared tooltip style — spread onto every <Tooltip {...TOOLTIP_STYLE} />
+export const TOOLTIP_STYLE = {
+  contentStyle: {
+    background: "hsl(240 10% 5.9%)",
+    border: "1px solid hsl(240 3.7% 15.9%)",
+    borderRadius: 8,
+    fontSize: 12,
+    padding: "8px 12px",
+    minWidth: 160,
+  },
+  labelStyle: { color: "hsl(0 0% 98%)", fontWeight: 600, marginBottom: 2 },
+  itemStyle:  { color: "hsl(240 5% 64.9%)" },
+  cursor:     { fill: "hsl(240 3.7% 15.9%)", opacity: 0.5 },
+} as const;
+
+export const PIE_TOOLTIP_STYLE = {
+  contentStyle: {
+    background: "hsl(240 10% 5.9%)",
+    border: "1px solid hsl(240 3.7% 15.9%)",
+    borderRadius: 8,
+    fontSize: 12,
+    padding: "8px 12px",
+    minWidth: 180,
+  },
+  labelStyle: { color: "hsl(0 0% 98%)", fontWeight: 600 },
+  itemStyle:  { color: "hsl(240 5% 64.9%)" },
+} as const;
+
 export const PIE_COLORS = [
   CHART_COLORS.blue,
   CHART_COLORS.green,

@@ -2,7 +2,7 @@
 
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from "recharts";
 import { ChartWrapper } from "./ChartWrapper";
-import { CHART_COLORS } from "@/lib/constants/chartColors";
+import { CHART_COLORS, TOOLTIP_STYLE } from "@/lib/constants/chartColors";
 
 interface Props {
   data: Array<{ date: string; subscriptions: number; cancellations: number }>;
@@ -32,7 +32,9 @@ export function ChurnAnalytics({ data, isLoading, isError }: Props) {
           <YAxis tick={{ fontSize: 10, fill: "hsl(240 5% 64.9%)" }} tickLine={false} axisLine={false} unit="%" />
           <Tooltip
             formatter={(v: unknown) => [`${v}%`, "Churn Rate"]}
-            contentStyle={{ background: "hsl(240 10% 5.9%)", border: "1px solid hsl(240 3.7% 15.9%)", borderRadius: 8, fontSize: 12 }}
+            contentStyle={TOOLTIP_STYLE.contentStyle}
+            labelStyle={TOOLTIP_STYLE.labelStyle}
+            itemStyle={TOOLTIP_STYLE.itemStyle}
           />
           <ReferenceLine y={8} stroke={CHART_COLORS.yellow} strokeDasharray="4 2" label={{ value: "Target 8%", fill: "hsl(240 5% 64.9%)", fontSize: 10 }} />
           <Line type="monotone" dataKey="churnRate" stroke={CHART_COLORS.orange} strokeWidth={2} dot={{ fill: CHART_COLORS.orange, r: 3 }} name="Churn Rate" />

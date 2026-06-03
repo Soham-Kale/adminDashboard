@@ -33,7 +33,7 @@ export default function DashboardPage() {
     <div className="space-y-6">
       {metrics && <KpiGrid metrics={metrics} />}
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <DailySubscriptionGrowth
           data={analytics?.daily ?? []}
           isLoading={analyticsQuery.isLoading}
@@ -48,7 +48,7 @@ export default function DashboardPage() {
         isError={analyticsQuery.isError}
       />
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <ActiveVsCancelled
           data={analytics?.daily ?? []}
           isLoading={analyticsQuery.isLoading}

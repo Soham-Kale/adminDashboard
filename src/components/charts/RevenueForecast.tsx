@@ -5,7 +5,7 @@ import {
   ReferenceLine,
 } from "recharts";
 import { ChartWrapper } from "./ChartWrapper";
-import { CHART_COLORS } from "@/lib/constants/chartColors";
+import { CHART_COLORS, TOOLTIP_STYLE } from "@/lib/constants/chartColors";
 import { useCurrency } from "@/hooks/useCurrency";
 
 interface Props {
@@ -54,7 +54,9 @@ export function RevenueForecast({ data, isLoading, isError }: Props) {
           <CartesianGrid strokeDasharray="3 3" stroke="hsl(240 3.7% 15.9%)" />
           <XAxis dataKey="month" tick={{ fontSize: 10, fill: "hsl(240 5% 64.9%)" }} tickLine={false} axisLine={false} />
           <YAxis tickFormatter={(v: number) => v >= 1000 ? `${symbol}${(v / 1000).toFixed(1)}k` : `${symbol}${v}`} tick={{ fontSize: 10, fill: "hsl(240 5% 64.9%)" }} tickLine={false} axisLine={false} />
-          <Tooltip formatter={(v: unknown) => v ? [formatRevenue(Number(v)), "Revenue"] : ["N/A", ""]} contentStyle={{ background: "hsl(240 10% 5.9%)", border: "1px solid hsl(240 3.7% 15.9%)", borderRadius: 8, fontSize: 12 }} />
+          <Tooltip formatter={(v: unknown) => v ? [formatRevenue(Number(v)), "Revenue"] : ["N/A", ""]} contentStyle={TOOLTIP_STYLE.contentStyle}
+            labelStyle={TOOLTIP_STYLE.labelStyle}
+            itemStyle={TOOLTIP_STYLE.itemStyle} />
           <ReferenceLine x={data?.[data.length - 1]?.month} stroke="hsl(240 5% 64.9%)" strokeDasharray="4 2" label={{ value: "Today", fill: "hsl(240 5% 64.9%)", fontSize: 10 }} />
           <Line type="monotone" dataKey="revenue" stroke={CHART_COLORS.green} strokeWidth={2} dot={false} connectNulls name="Actual" />
           <Line type="monotone" dataKey="forecast" stroke={CHART_COLORS.orange} strokeWidth={2} dot={{ fill: CHART_COLORS.orange, r: 4 }} strokeDasharray="6 3" connectNulls name="Forecast" />

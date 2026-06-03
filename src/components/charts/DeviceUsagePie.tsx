@@ -2,7 +2,7 @@
 
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { ChartWrapper } from "./ChartWrapper";
-import { CHART_COLORS } from "@/lib/constants/chartColors";
+import { CHART_COLORS, TOOLTIP_STYLE } from "@/lib/constants/chartColors";
 
 interface Props {
   data?: Array<{ device: string; value: number; percentage: number }>;
@@ -16,7 +16,7 @@ export function DeviceUsagePie({ data, isLoading, isError }: Props) {
   return (
     <ChartWrapper
       title="Device Usage"
-      description="User device distribution"
+      description="Profile-tracked devices only — excludes subscribers without a device record"
       isLoading={isLoading}
       isError={isError}
       isEmpty={!data?.length}
@@ -39,8 +39,10 @@ export function DeviceUsagePie({ data, isLoading, isError }: Props) {
             ))}
           </Pie>
           <Tooltip
-            formatter={(v: unknown, _: unknown, props: { payload?: { percentage?: number } }) => [`${v} users (${props.payload?.percentage ?? 0}%)`, ""]}
-            contentStyle={{ background: "hsl(240 10% 5.9%)", border: "1px solid hsl(240 3.7% 15.9%)", borderRadius: 8, fontSize: 12 }}
+            formatter={(v: unknown, _: unknown, props: { payload?: { percentage?: number } }) => [`${v} tracked (${props.payload?.percentage ?? 0}% of tracked)`, ""]}
+            contentStyle={TOOLTIP_STYLE.contentStyle}
+            labelStyle={TOOLTIP_STYLE.labelStyle}
+            itemStyle={TOOLTIP_STYLE.itemStyle}
           />
           <Legend wrapperStyle={{ fontSize: 11 }} />
         </PieChart>

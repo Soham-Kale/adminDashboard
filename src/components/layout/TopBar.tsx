@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, Sun, Moon, User, RefreshCw } from "lucide-react";
+import { Bell, Sun, Moon, User, RefreshCw, Menu } from "lucide-react";
 import { useUiStore } from "@/store/uiStore";
 import { usePathname } from "next/navigation";
 import { NAV_ITEMS } from "@/lib/constants/navigation";
@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 import { CurrencySelector } from "./CurrencySelector";
 
 export function TopBar() {
-  const { theme, setTheme } = useUiStore();
+  const { theme, setTheme, setMobileDrawerOpen } = useUiStore();
   const pathname = usePathname();
   const queryClient = useQueryClient();
 
@@ -28,10 +28,20 @@ export function TopBar() {
   }
 
   return (
-    <header className="h-16 border-b border-border bg-background/80 backdrop-blur-sm flex items-center justify-between px-6 shrink-0 sticky top-0 z-30">
-      <div>
-        <h1 className="text-lg font-semibold text-foreground">{pageTitle}</h1>
-        <p className="text-xs text-muted-foreground">YouInSports Admin</p>
+    <header className="h-16 border-b border-border bg-background/80 backdrop-blur-sm flex items-center justify-between px-3 md:px-6 shrink-0 sticky top-0 z-30">
+      <div className="flex items-center gap-3">
+        {/* Hamburger — mobile only */}
+        <button
+          onClick={() => setMobileDrawerOpen(true)}
+          className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors md:hidden"
+          aria-label="Open menu"
+        >
+          <Menu className="h-5 w-5" />
+        </button>
+        <div>
+          <h1 className="text-base md:text-lg font-semibold text-foreground">{pageTitle}</h1>
+          <p className="text-xs text-muted-foreground hidden sm:block">YouInSports Admin</p>
+        </div>
       </div>
 
       <div className="flex items-center gap-2">

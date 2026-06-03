@@ -2,7 +2,7 @@
 
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from "recharts";
 import { ChartWrapper } from "./ChartWrapper";
-import { CHART_COLORS } from "@/lib/constants/chartColors";
+import { CHART_COLORS, TOOLTIP_STYLE } from "@/lib/constants/chartColors";
 
 interface Props {
   data: Array<{ date: string; subscriptions: number; cancellations: number }>;
@@ -36,7 +36,9 @@ export function RetentionAnalytics({ data, isLoading, isError }: Props) {
           <CartesianGrid strokeDasharray="3 3" stroke="hsl(240 3.7% 15.9%)" />
           <XAxis dataKey="date" tick={{ fontSize: 10, fill: "hsl(240 5% 64.9%)" }} tickLine={false} axisLine={false} />
           <YAxis tick={{ fontSize: 10, fill: "hsl(240 5% 64.9%)" }} tickLine={false} axisLine={false} unit="%" domain={[80, 100]} />
-          <Tooltip formatter={(v: unknown) => [`${v}%`, "Retention"]} contentStyle={{ background: "hsl(240 10% 5.9%)", border: "1px solid hsl(240 3.7% 15.9%)", borderRadius: 8, fontSize: 12 }} />
+          <Tooltip formatter={(v: unknown) => [`${v}%`, "Retention"]} contentStyle={TOOLTIP_STYLE.contentStyle}
+            labelStyle={TOOLTIP_STYLE.labelStyle}
+            itemStyle={TOOLTIP_STYLE.itemStyle} />
           <ReferenceLine y={90} stroke={CHART_COLORS.blue} strokeDasharray="4 2" label={{ value: "Target 90%", fill: "hsl(240 5% 64.9%)", fontSize: 10 }} />
           <Area type="monotone" dataKey="retention" stroke={CHART_COLORS.green} fill="url(#colorRetention)" strokeWidth={2} name="Retention" />
         </AreaChart>

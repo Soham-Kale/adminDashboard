@@ -5,7 +5,7 @@ import {
   ResponsiveContainer, Cell, LabelList,
 } from "recharts";
 import { ChartWrapper } from "./ChartWrapper";
-import { PIE_COLORS } from "@/lib/constants/chartColors";
+import { PIE_COLORS, TOOLTIP_STYLE } from "@/lib/constants/chartColors";
 
 interface Props {
   data?: Array<{ sport: string; users: number; percentage: number }>;
@@ -18,8 +18,8 @@ export function SportWiseUsers({ data, isLoading, isError }: Props) {
 
   return (
     <ChartWrapper
-      title="Users by Sport"
-      description="Total registered users per sport category"
+      title="Sport Selections"
+      description="Users with multiple sports appear in each bar — total may exceed subscriber count"
       isLoading={isLoading}
       isError={isError}
       isEmpty={!sorted.length}
@@ -48,15 +48,12 @@ export function SportWiseUsers({ data, isLoading, isError }: Props) {
           />
           <Tooltip
             formatter={(v: unknown, _: unknown, props: { payload?: { percentage?: number } }) => [
-              `${v} users (${props.payload?.percentage ?? 0}%)`,
-              "Users",
+              `${v} selections (${props.payload?.percentage ?? 0}% of all selections)`,
+              "",
             ]}
-            contentStyle={{
-              background: "hsl(240 10% 5.9%)",
-              border: "1px solid hsl(240 3.7% 15.9%)",
-              borderRadius: 8,
-              fontSize: 12,
-            }}
+            contentStyle={TOOLTIP_STYLE.contentStyle}
+            labelStyle={TOOLTIP_STYLE.labelStyle}
+            itemStyle={TOOLTIP_STYLE.itemStyle}
           />
           <Bar dataKey="users" radius={[0, 6, 6, 0]} barSize={18}>
             {sorted.map((_, i) => (

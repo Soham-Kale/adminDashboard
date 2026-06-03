@@ -13,18 +13,11 @@ export async function GET(req: Request) {
       `/admin/analytics?${qs.toString()}`
     );
 
-    // Backend does not return country/sport/device breakdowns.
-    // These keys are injected as empty arrays so chart components
-    // render their <EmptyState> cleanly instead of crashing.
+    // Backend returns all fields: daily, weekly, monthly, funnel, heatmap,
+    // comparative, billingBreakdown, providers, plans,
+    // countries (currency-derived), devices (partial), sports (multi-select), regions
     return NextResponse.json({
-      data: {
-        ...backendData.data,
-        countries:   [],
-        devices:     [],
-        sports:      [],
-        sportStatus: [],
-        regions:     [],
-      },
+      data: backendData.data,
       meta: backendData.meta,
     });
   } catch (err) {

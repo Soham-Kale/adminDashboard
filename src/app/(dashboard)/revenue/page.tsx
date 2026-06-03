@@ -38,14 +38,14 @@ export default function RevenuePage() {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <StatCard label="Monthly Revenue"  value={stats ? formatRevenue(stats.mrr, "USD")                 : "—"} icon={DollarSign} color="bg-green-500/10 text-green-400" />
         <StatCard label="Annual Revenue"   value={stats ? formatRevenue(stats.arr, "USD")                 : "—"} icon={TrendingUp}  color="bg-blue-500/10 text-blue-400" />
         <StatCard label="Avg. Per User"    value={stats ? formatRevenue(stats.averageRevenuePerUser, "USD"): "—"} icon={CreditCard}  color="bg-purple-500/10 text-purple-400" />
         <StatCard label="Growth Rate"      value={stats ? `${stats.revenueGrowth.toFixed(1)}%`           : "—"} icon={TrendingUp}  color="bg-orange-500/10 text-orange-400" />
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <MonthlyRevenueAnalytics
           data={analyticsData?.monthly ?? []}
           isLoading={analyticsLoading}
