@@ -1,3 +1,5 @@
+export const runtime = 'edge';
+
 import { NextResponse } from "next/server";
 
 // No backend endpoint exists for admin logs yet.

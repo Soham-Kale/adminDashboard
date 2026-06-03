@@ -35,11 +35,15 @@ const userColumns: ColumnDef<AppUser, unknown>[] = [
   {
     accessorKey: "sport",
     header: "Sport",
-    cell: ({ getValue }) => (
-      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
-        {getValue() as string}
-      </span>
-    ),
+    cell: ({ getValue }) => {
+      const val = getValue() as string | null;
+      if (!val) return <span className="text-muted-foreground text-xs">—</span>;
+      return (
+        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
+          {val}
+        </span>
+      );
+    },
   },
   {
     accessorKey: "country",
@@ -47,20 +51,20 @@ const userColumns: ColumnDef<AppUser, unknown>[] = [
     cell: ({ getValue }) => (
       <span className="flex items-center gap-1.5 text-sm">
         <Globe className="h-3 w-3 text-muted-foreground" />
-        {getValue() as string}
+        {(getValue() as string) || "—"}
       </span>
     ),
   },
   {
     accessorKey: "deviceType",
     header: "Device",
-    cell: ({ getValue }) => <span className="capitalize">{getValue() as string}</span>,
+    cell: ({ getValue }) => <span className="capitalize">{(getValue() as string) || "—"}</span>,
   },
   {
     accessorKey: "referralSource",
     header: "Source",
     cell: ({ getValue }) => (
-      <span className="capitalize text-xs">{(getValue() as string).replace(/_/g, " ")}</span>
+      <span className="capitalize text-xs">{((getValue() as string) ?? "").replace(/_/g, " ") || "—"}</span>
     ),
   },
   {
